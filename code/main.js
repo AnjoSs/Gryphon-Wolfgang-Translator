@@ -63,7 +63,7 @@ var placeIdCount = 0;
 var stdGraphics = "TBD";
 var transitions = [];
 var places = [];
-var tokenColors = [];
+var tokenColorArray = [];
 
 createNet();
 createTransitions(fragments);
@@ -85,7 +85,7 @@ function createTransitions(fragments){
 function createPlaces(dataClasses){
     dataClasses.forEach(function(dataClass){
         dataClass.olc.intermediateThrowEvent.forEach(function(state){
-            place = new Place("p"+placeIdCount++, state.name, stdGraphics, null);
+            place = new Place("p"+placeIdCount++, dataClass.name + "[" + state.name + "]", stdGraphics, null);
             places.push(place);
             //console.log(state.name);
         })
@@ -95,29 +95,55 @@ function createPlaces(dataClasses){
 function createTokenColors(dataClasses){
     dataClasses.forEach(function(dataClass){
         tokenColor = new TokenColor(dataClass.name, [0,0,0]);
-        tokenColors.push(tokenColor);
+        tokenColorArray.push(tokenColor);
     })
 }
 
 
 //### XML-Builder ###
+buildCPN();
 
-var cpn = xmlbuilder.create('root');
-buildCPN(cpn);
+function buildCPN(cpn) {
+    var pnml = xmlbuilder.create('pnml'); //Creates the nets XML
+    pnml.att("xmlns","http://www.pnml.org/version-2009/grammar/pnml");
 
-function buildCPN(cpn){
-    transitions.forEach(function(transition){
-        cpn.ele(transition.id);
+    var net = pnml.ele('net'); //Creating child of pnml
+    net.att("id", "ParcelDelivery_Max");
+    net.att("type", "http://ifnml.process-security.de/grammar/v1.0/cpnet");
+
+    var page = net.ele('page'); //creating child of net
+    page.att("id", "top-level");
+
+    //Attach the Places, each is child of page
+    places.forEach(function (place) {
+        var pl = page.ele('place'); //create places node as child of page
+        pl.att("id", place.id);
+        var naming = pl.ele('name'); //create child of place
+        var text = naming.ele('text', {}, place.name); //create child of name
+        var namingGraphics = naming.ele('graphics');
+
+        //TODO: Missing children of naming node, graphics, initial marking
+
+        var graphics = pl.ele('graphics'); //create child of place
+
+        if(place.initialMarking){ //only needed if place has initial marking
+            var initialMarking = pl.ele('initialMarking'); //create child of place;
+        }
     });
-    places.forEach(function(place){
-        cpn.ele(place.id);
-    })
-}
 
-fs.writeFile('outputcpn.pnml', cpn, (err) => {
-    if (err) throw err;
-    console.log("The file was succesfully saved!");
-});
+    //Attach the Transitions, each is child of page
+    transitions.forEach(function (trans) {
+        page.ele(trans.id);
+    });
+
+
+    var tokencolors = net.ele('tokencolors'); //creating child of net
+
+    fs.writeFile('outputcpn.xml', pnml, (err) => {
+        if (err) throw err;
+        console.log("The file was succesfully saved!");
+    });
+}
 
 //### Test-Blubber ###
 test();
