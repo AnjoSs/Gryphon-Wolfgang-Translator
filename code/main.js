@@ -1,6 +1,5 @@
 const fs = require('fs');
 const pnmlBuilder = require('./xml-build.js');
-var parseString = require('xml2js').parseString;
 
 //### CPN Classes ###
 const Place = require('./place.js');
@@ -33,19 +32,25 @@ var tokenColorArray = [];
 
 createTransitions(fragments);
 createPlaces(dataClasses);
-createArcs(fragments);
-createTestArcs();
+createArcs(transitions);
+//createTestArcs();
 createTokenColors(dataClasses);
 
 //### XML-Builder ###
 pnmlBuilder.buildPnml(modelName, places, transitions, arcs, tokenColorArray);
 
+
+
+//### functions ###
 function createTransitions(fragments){
     fragments.forEach(function(fragment){
         graphics = new Graphics("#FFFFFF", 100, transIdCount*100+100);
         transition = new Transition("t"+transIdCount++, fragment.name, graphics, false);
+        transition.calculateManualPreConditions(fragment);
+        transition.calculatePreAndPostConditions(fragment);
         transitions.push(transition);
-        //console.log(fragment);
+        //console.log(transition.preConditions);
+        //console.log(transition.postConditions);
     })
 }
 
@@ -62,9 +67,7 @@ function createPlaces(dataClasses){
 
 function createArcs(fragments){
     fragments.forEach(function (fragment){
-        parseString(fragment.content, function (err, result) {
-            //console.log(result['bpmn:definitions']['bpmn:process']);
-        })
+
     })
 }
 
