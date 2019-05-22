@@ -30,8 +30,8 @@ var transitions = [];
 var arcs = [];
 var tokenColorArray = [];
 
-createTransitions(fragments);
 createPlaces(dataClasses);
+createTransitions(fragments);
 createArcs(transitions);
 //createTestArcs();
 createTokenColors(dataClasses);
@@ -39,29 +39,27 @@ createTokenColors(dataClasses);
 //### XML-Builder ###
 pnmlBuilder.buildPnml(modelName, places, transitions, arcs, tokenColorArray);
 
-
-
 //### functions ###
-function createTransitions(fragments){
-    fragments.forEach(function(fragment){
-        graphics = new Graphics("#FFFFFF", 100, transIdCount*100+100);
-        transition = new Transition("t"+transIdCount++, fragment.name, graphics, false);
-        transition.calculateManualPreConditions(fragment);
-        transition.calculatePreAndPostConditions(fragment);
-        transitions.push(transition);
-        //console.log(transition.preConditions);
-        //console.log(transition.postConditions);
-    })
-}
-
 function createPlaces(dataClasses){
     dataClasses.forEach(function(dataClass){
         dataClass.olc.intermediateThrowEvent.forEach(function(state){
-            graphics = new Graphics("#FFFFFF", 300, placeIdCount*100+100);
+            graphics = new Graphics("#FFFFFF", 700, placeIdCount*100+100);
             place = new Place("p"+placeIdCount++, dataClass.name + "[" + state.name + "]", graphics, null);
             places.push(place);
-            //console.log(state.name);
         })
+    })
+}
+
+function createTransitions(fragments){
+    fragments.forEach(function(fragment){
+        graphics = new Graphics("#FFFFFF", 200, fragments.indexOf(fragment)*200+100);
+        transition = new Transition("t"+transIdCount++, fragment.name, graphics, false);
+        transition.calculateManualPreConditions(fragment);
+        transition.calculatePreAndPostConditions(fragment);
+        transIdCount = transition.calculateArcs(places, placeIdCount, transIdCount);
+
+        //console.log(temp);
+        transitions.push(transition);
     })
 }
 

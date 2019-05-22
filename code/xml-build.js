@@ -1,5 +1,6 @@
 const fs = require('fs');
 const xmlbuilder = require('xmlbuilder');
+const Arc = require('./arc.js');
 
 module.exports = {
     buildPnml: function (modelName, places, transitions, arcs, tokenColorArray) {
@@ -14,58 +15,28 @@ module.exports = {
         page.att("id", "top-level");
 
         //Attach the Places, each is child of page
-        places.forEach(function (place) {
-            var pl = page.ele('place'); //create places node as child of page
-            pl.att("id", place.id);
-
-            buildStdNameNode(pl, place.name);
-            buildStdGraphicsNode(pl, place.graphics);
-
-            //TODO: Missing children of initial marking
-            if (place.initialMarking) {/* //only needed if place has initial marking
-            var initialMark = pl.ele('initialMarking'); //create child of place;
-            var text = initialMark.ele('text', 1);
-            var colors = initialMark.ele(colors);
-            place.initialMarking.forEach( function (newColor) {
-                var color = colors.ele('color', newColor);
-            })
-        */
-            }
-        });
+        places.forEach(function (place) { buildPlace(place, page); });
 
         //Attach the Transitions, each is child of page
+        var usedArcs = [];
         transitions.forEach(function (trans) {
-            var tr = page.ele('transition'); //create places node as child of page
-            tr.att("id", trans.id);
-
-            buildStdNameNode(tr, trans.name);
-            buildStdGraphicsNode(tr, trans.graphics);
-
-            tr.ele("silent", "false");
-
-        });
-
-        arcs.forEach(function (newArc) {
-            var arc = page.ele('arc'); //create child of page
-            arc.att("id", newArc.id);
-            arc.att("source", newArc.source);
-            arc.att("target", newArc.target);
-
-            var arcGraphics = arc.ele('graphics');
-            var line = arcGraphics.ele('line'); //create child of graphics
-            line.att("color", "#000000");
-            line.att("shape", "line");
-            line.att("style", "solid");
-            line.att("width", "1.0");
-
-            var inscription = arc.ele('inscription');
-            inscription.ele('text', 1);
-            var arcColors = inscription.ele('colors'); //create child of inscription
-            newArc.colors.forEach(function (newColor) {
-                arcColors.ele('color', newColor);
+            buildTransition(trans, page);
+            trans.transitions.forEach(silentTrans => {buildTransition(silentTrans, page)});
+            trans.places.forEach(place => {buildPlace(place, page)});
+            trans.arcs.forEach(arc => {
+                if(!usedArcs.includes(arc.id)){
+                    usedArcs.push(arc.id);
+                    buildArc(arc, page);
+                    //console.log(arc.id);
+                }
             });
-            buildStdTextGraphicsNode(inscription);
+            /*buildArc(trans.arcs[0], page);
+            console.log(trans.arcs);*/
         });
+
+        var testArc = new Arc('arcTP_t0p1', 't0', 'p1', []);
+
+        //buildArc(testArc, page);
 
         var tokencolors = net.ele('tokencolors'); //creating child of net
 
@@ -80,6 +51,61 @@ module.exports = {
     }
 };
 
+function buildTransition(trans, page){
+    var tr = page.ele('transition'); //create places node as child of page
+    tr.att("id", trans.id);
+
+    buildStdNameNode(tr, trans.name);
+    buildStdGraphicsNode(tr, trans.graphics);
+    //console.log(trans.id);
+    //console.log(trans.graphics.posX, trans.graphics.posY);
+
+    tr.ele("silent", "false");
+}
+
+function buildPlace(place, page){
+    var pl = page.ele('place'); //create places node as child of page
+    pl.att("id", place.id);
+
+    buildStdNameNode(pl, place.name);
+    buildStdGraphicsNode(pl, place.graphics);
+
+    //console.log(place.id);
+    //console.log(place.graphics.posX, place.graphics.posY);
+
+    //TODO: Missing children of initial marking
+    if (place.initialMarking) {/* //only needed if place has initial marking
+            var initialMark = pl.ele('initialMarking'); //create child of place;
+            var text = initialMark.ele('text', 1);
+            var colors = initialMark.ele(colors);
+            place.initialMarking.forEach( function (newColor) {
+                var color = colors.ele('color', newColor);
+            })
+        */
+    }
+}
+
+function buildArc(newArc, page){
+    var arc = page.ele('arc'); //create child of page
+    arc.att("id", newArc.id);
+    arc.att("source", newArc.source);
+    arc.att("target", newArc.target);
+
+    var arcGraphics = arc.ele('graphics');
+    var line = arcGraphics.ele('line'); //create child of graphics
+    line.att("color", "#000000");
+    line.att("shape", "line");
+    line.att("style", "solid");
+    line.att("width", "1.0");
+
+    var inscription = arc.ele('inscription');
+    inscription.ele('text', 1);
+    var arcColors = inscription.ele('colors'); //create child of inscription
+    newArc.colors.forEach(function (newColor) {
+        arcColors.ele('color', newColor);
+    });
+    buildStdTextGraphicsNode(inscription);
+}
 
 function buildStdNameNode(parent, name){
     var naming = parent.ele('name'); //create child of place
