@@ -1,5 +1,3 @@
-"# Gryphon-Wolfgang-Translator"
-
 Getting Started
 ===============
 
@@ -8,36 +6,32 @@ Local Installation (for developers)
 
 ### Prerequisites
 
-The following software is necessary to build and run the editor:
+The following software is necessary to run the translator:
 
 -   Install **Node.js**, available
     [here](https://nodejs.org/en/download/) (this includes the node
     package manager `npm`)
--   Install **node-gyp** by running `npm install -g node-gyp` on the
-    command line, e.g. [cygwin](https://cygwin.com) or Window `cmd`
-    -   Unix/Mac: this may require the **build-essentials** tools, which
-        you can install with `sudo apt-get install build-essential`
--   Install **browserify** by running `npm install -g browserify`
--   Install **grunt-cli** by runniing `npm install -g grunt-cli`
--   Install **mongodb**, available
-    [here](https://www.mongodb.org/downloads).
-    -   add the `bin` directory to your path (default directory is
-        `C:\Program Files\MongoDB\Server\3.4\bin`)
-
-When using Windows you have to install the following additional
-dependencies:
-
--   Install **Python 2.7.X (not Python 3)**, available
-    [here](https://www.python.org/downloads/release/python-2713/). Add
-    the directory containing the python.exe executable to your PATH
--   Install Microsoft \*Visual Studio Community Edition 2015 (not
-    2017)\*, available
-    [here](https://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx).
-    -   Be sure to select Windows 10 SDK and Windows 8.1 SDK during
-        installation
--   Configure npm to use the right version of Visual Studio:
-    `npm config set msvs_version 2015`
--   Configure npm with the path to your Python executable:
-    `npm config set python C:\YOUR_PYTHON_DIRECTORY\python.exe`
+    
+-   Install the **WOLFGANG** petri net editor, available 
+    [here](https://github.com/iig-uni-freiburg/WOLFGANG.git)
 
 ### Initial setup
+
+1.  Clone the source code repository from
+    [github](http://github.com/bptlab/gryphon) (e.g. by running
+    `git clone https://github.com/bptlab/gryphon.git` on the command
+    line)
+    -   the following command assumes that you are in the gryphon
+        directory!
+2.  Run `npm install` to set up all additional dependency packages
+
+### Starting the Gryphon-Wolgang-Translator
+-------------------------------------------
+
+Having set up all of the above, you can start the translator as follows:
+
+1. Get your Input data by downloading it from your Gryphon-Model Repository
+    - Model a case model in the Gryphon Model Repository
+    - Download the model and save it named as "inputcasemodel.json" into the file directory you cloned the project to
+2. Run the code by executing `main.js`
+3. Open the created `outputcpn.pnml` with the **WOLFGANG** petri net editor
