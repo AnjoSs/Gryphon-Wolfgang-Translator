@@ -37,6 +37,6 @@ Having set up all of the above, you can start the translator as follows:
 
 1. Get your Input data by downloading it from your Gryphon-Model Repository
     - Model a case model in the Gryphon Model Repository
-    - Download the model and save it named as "inputcasemodel.json" into the file directory you cloned the project to
+    - Download the model and save it named as "inputcasemodel.json" into the file directory you cloned the project to in `/code`
 2. Run the code by executing `main.js`
 3. Open the created `outputcpn.pnml` with the **WOLFGANG** petri net editor
