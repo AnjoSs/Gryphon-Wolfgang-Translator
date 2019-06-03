@@ -1,3 +1,8 @@
+Gryphon-Wolfgang-Translator
+===========================
+
+This Translator is a tool for the translation and abstraction of fragment based case models modelled in the model repository **Gryphon** into Colored Petri Nets executable with **WOLFGANG**. This enables the simulation of fragments and their dependencies based on data objects.
+
 Getting Started
 ===============
 
