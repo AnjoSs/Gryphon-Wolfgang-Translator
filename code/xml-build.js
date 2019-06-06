@@ -1,88 +1,68 @@
 const fs = require('fs');
 const xmlbuilder = require('xmlbuilder');
-const Arc = require('./arc.js');
+const Arc = require('./classes/arc.js');
+
+//This Class uses the npm module 'xmlbuilder' with a specific semantic.
+//To get insight take a look at the documentation at https://www.npmjs.com/package/xmlbuilder.
 
 module.exports = {
-    buildPnml: function (modelName, places, transitions, arcs, tokenColorArray) {
-        var pnml = xmlbuilder.create('pnml'); //Creates the nets XML
-        pnml.att("xmlns", "http://www.pnml.org/version-2009/grammar/pnml");
+    buildPnml: function (modelName, places, transitions, tokenColorArray) {
+        var pnml = xmlbuilder.create('pnml'); //Creates the XML
+        pnml.att("xmlns", "http://www.pnml.org/version-2009/grammar/pnml"); //is needed by Wolfgang
 
         var net = pnml.ele('net'); //Creating child of pnml
         net.att("id", modelName);
         net.att("type", "http://ifnml.process-security.de/grammar/v1.0/cpnet");
 
         var page = net.ele('page'); //creating child of net
-        page.att("id", "top-level");
+        page.att("id", "top-level"); //needed by wolfgang
 
         //Attach the Places, each is child of page
-        places.forEach(function (place) { buildPlace(place, page); });
+        places.forEach(function (place) { buildPlace(place, page) });
 
         //Attach the Transitions, each is child of page
-        var usedArcs = [];
+        let usedArcs = [];
         transitions.forEach(function (trans) {
-            buildTransition(trans, page);
-            trans.transitions.forEach(silentTrans => {buildTransition(silentTrans, page)});
-            trans.places.forEach(place => {buildPlace(place, page)});
+            buildTransition(trans, page); //build the trnsition
+            trans.transitions.forEach(silentTrans => {buildTransition(silentTrans, page)}); //for each silent transition belonging to a transition build it
+            trans.silentPrePlaces.forEach(place => {buildPlace(place, page)}); //for each pre condition belonging to a transition build a place
+            trans.silentPostPlaces.forEach(place => {buildPlace(place, page)}); //for each post condition belonging to a transition build a place
             trans.arcs.forEach(arc => {
-                if(!usedArcs.includes(arc.id)){
+                if(!usedArcs.includes(arc.id)){ //assure that no arc is used twice, preventing errors in wolfgang
                     usedArcs.push(arc.id);
                     buildArc(arc, page);
-                    //console.log(arc.id);
                 }
             });
-            /*buildArc(trans.arcs[0], page);
-            console.log(trans.arcs);*/
         });
 
-        var testArc = new Arc('arcTP_t0p1', 't0', 'p1', []);
+        buildTokenColors(tokenColorArray, net);
 
-        //buildArc(testArc, page);
-
-        var tokencolors = net.ele('tokencolors'); //creating child of net
-
-        fs.writeFile('outputcpn.xml', pnml, (err) => {
-            if (err) throw err;
-            console.log("The XML was successfully saved!");
-        });
-        fs.writeFile('outputcpn.pnml', pnml, (err) => {
-            if (err) throw err;
-            console.log("The PNML was successfully saved!");
-        });
+        return pnml;
     }
 };
 
-function buildTransition(trans, page){
-    var tr = page.ele('transition'); //create places node as child of page
+function buildTransition(trans, parent){
+    var tr = parent.ele('transition'); //create places node as child of page
     tr.att("id", trans.id);
-
     buildStdNameNode(tr, trans.name);
     buildStdGraphicsNode(tr, trans.graphics);
-    //console.log(trans.id);
-    //console.log(trans.graphics.posX, trans.graphics.posY);
-
     tr.ele("silent", "false");
 }
 
-function buildPlace(place, page){
-    var pl = page.ele('place'); //create places node as child of page
+function buildPlace(place, parent){
+    var pl = parent.ele('place'); //create places node as child of page
     pl.att("id", place.id);
-
     buildStdNameNode(pl, place.name);
     buildStdGraphicsNode(pl, place.graphics);
-
-    //console.log(place.id);
-    //console.log(place.graphics.posX, place.graphics.posY);
-
-    //TODO: Missing children of initial marking
-    if (place.initialMarking) {/* //only needed if place has initial marking
+    //Initial Marking is currently not supported
+    /*if (place.initialMarking) {//only needed if place has initial marking
             var initialMark = pl.ele('initialMarking'); //create child of place;
             var text = initialMark.ele('text', 1);
             var colors = initialMark.ele(colors);
             place.initialMarking.forEach( function (newColor) {
                 var color = colors.ele('color', newColor);
             })
-        */
-    }
+    }*/
 }
 
 function buildArc(newArc, page){
@@ -105,6 +85,19 @@ function buildArc(newArc, page){
         arcColors.ele('color', newColor);
     });
     buildStdTextGraphicsNode(inscription);
+}
+
+function buildTokenColors(tokenColorArray, parent){
+    var tokenColors = parent.ele('tokencolors');
+    tokenColorArray.forEach(ele => {
+        var tokenColor = tokenColors.ele('tokencolor');
+        tokenColor.ele('color', ele.color);
+        var rgbColor = tokenColor.ele('rgbcolor');
+        rgbColor.ele('r', ele.rgbcolor[0]);
+        rgbColor.ele('g', ele.rgbcolor[1]);
+        rgbColor.ele('b', ele.rgbcolor[2]);
+    })
+
 }
 
 function buildStdNameNode(parent, name){
