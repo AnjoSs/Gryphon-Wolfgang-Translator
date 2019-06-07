@@ -5,7 +5,6 @@ const pnmlBuilder = require('./xml-build.js');
 const Place = require('./classes/place.js');
 const Transition = require('./classes/transition.js');
 const Graphics = require('./classes/graphics.js');
-const Arc = require('./classes/arc.js');
 const TokenColor = require('./classes/tokenColor.js');
 
 //### Data Input ###
@@ -24,8 +23,8 @@ const dataClasses = caseModel.domainmodel.dataclasses; //contains all Data Objec
 
 
 //### Execution ###
-var transIdCount = 0; //The Memory Structure of pnml needs a continuous id for transitions and places, therefore a global id counter is necessary
-var placeIdCount = 0;
+let transIdCount = 0; //The Memory Structure of pnml needs a continuous id for transitions and places, therefore a global id counter is necessary
+let placeIdCount = 0;
 
 const places = getPlaces(dataClasses); //generate places out of the input data classes
 const transitions = getTransitions(fragments); //generate fragments out of input fragments
