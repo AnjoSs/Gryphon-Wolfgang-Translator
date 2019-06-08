@@ -31,8 +31,8 @@ The following software is necessary to run the translator:
     line)
 2.  Run `npm install` to set up all additional dependency packages
 
-### Starting the Gryphon-Wolgang-Translator
--------------------------------------------
+Starting the Gryphon-Wolgang-Translator
+-----------------------------------
 
 Having set up all of the above, you can start the translator as follows:
 
