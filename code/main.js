@@ -9,16 +9,15 @@ const TokenColor = require('./classes/tokenColor.js');
 
 //### Data Input ###
 const inputPath = process.argv[2] || "inputcasemodel.json";
-//const inputPath = "inputcasemodel.json";
 const inputFile = fs.readFileSync(inputPath);
 
 //### Creating JSON Objects ###
 const caseModel = JSON.parse(inputFile);
 
-//const terminationConditions = caseModel.terminationconditions;  //has array of conditions
+//const terminationConditions = caseModel.terminationconditions;  //has array of conditions, currently unused
 const fragments = caseModel.fragments;  //has array of fragments with precondition, name, content xml
 const modelName = caseModel.name;  //just the Name of the Case Model
-//const startConditions = caseModel.startconditions;  // Unicorn query and array of Data Classes with mapping and name and state
+//const startConditions = caseModel.startconditions;  // Unicorn query and array of Data Classes with mapping and name and state, currently unused
 const dataClasses = caseModel.domainmodel.dataclasses; //contains all Data Object Describtions
 
 
@@ -33,14 +32,12 @@ const tokenColors = getTokenColors(dataClasses); //generate Token Colors out of 
 const pnml = pnmlBuilder.buildPnml(modelName, places, transitions, tokenColors); //builds the resulting pnml file
 
 //### write the created pnml into a file ###
-fs.writeFile('outputcpn.xml', pnml, (err) => {
-    if (err) throw err;
-    console.log("The XML was successfully saved!");
-});
 fs.writeFile('outputcpn.pnml', pnml, (err) => {
     if (err) throw err;
     console.log("The PNML was successfully saved!");
 });
+
+
 
 
 //### functions ###
