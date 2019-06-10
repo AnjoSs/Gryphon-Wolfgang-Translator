@@ -8,7 +8,7 @@ const Graphics = require('./classes/graphics.js');
 const TokenColor = require('./classes/tokenColor.js');
 
 //### Data Input ###
-const inputPath = process.argv[2] || "inputcasemodel.json";
+const inputPath = process.argv[2] || (__dirname + "\\inputcasemodel.json");
 const inputFile = fs.readFileSync(inputPath);
 
 //### Creating JSON Objects ###
@@ -36,8 +36,6 @@ fs.writeFile('outputcpn.pnml', pnml, (err) => {
     if (err) throw err;
     console.log("The PNML was successfully saved!");
 });
-
-
 
 
 //### functions ###
