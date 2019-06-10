@@ -39,7 +39,7 @@ Having set up all of the above, you can start the translator as follows:
 1. Get your Input data by downloading it from your Gryphon-Model Repository
     - Model a case model in the Gryphon Model Repository
     - Download the model and save it
-2. Run the code by executing `main.js`
+2. Run the code by executing `main.js` in your command line
     - the translator will translate an example case model
     - add the path to your execution command of your model to execute your own model
 3. Open the created `outputcpn.pnml` with the **WOLFGANG** petri net editor
