@@ -26,8 +26,8 @@ The following software is necessary to run the translator:
 ### Initial setup
 
 1.  Clone the source code repository from
-    [github](http://github.com/bptlab/gryphon) (e.g. by running
-    `git clone https://github.com/bptlab/gryphon.git` on the command
+    [github](https://github.com/AnjoSs/Gryphon-Wolfgang-Translator) (e.g. by running
+    `git clone https://github.com/AnjoSs/Gryphon-Wolfgang-Translator.git` on the command
     line)
 2.  Run `npm install` to set up all additional dependency packages
 
